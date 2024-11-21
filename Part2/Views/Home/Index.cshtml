@@ -1,0 +1,227 @@
+﻿@model Part1.Models.SubmitClaimsViewModel
+@{
+    ViewData["Title"] = "Welcome Page";
+}
+
+<div class="container page-background">
+    <div class="login-container">
+        <div class="login-box">
+            @if (User.Identity.IsAuthenticated)
+            {
+                var userRole = User.IsInRole("Lecturer") ? "Lecturer" : User.IsInRole("Programme Coordinator") ? "Programme Coordinator" : User.IsInRole("Academic Manager") ? "Academic Manager" : null;
+
+                if (userRole == "Lecturer" && Model.Lecturer != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.Lecturer.LecturerName @Model.Lecturer.LecturerSurname!</h1>
+                    <p class="login-subtitle">We're glad to have you back. Ready to submit your claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="Submit">Go to Submit Claims</a>
+                }
+                else if (userRole == "Programme Coordinator" && Model.ProgrammeCoordinator != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.ProgrammeCoordinator.CoordinatorName @Model.ProgrammeCoordinator.CoordinatorSurname!</h1>
+                    <p class="login-subtitle">Ready to review and approve claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="VerifyClaims">Go to Review Claims</a>
+                }
+                else if (userRole == "Academic Manager" && Model.AcademicManager != null)
+                {
+                    <h1 class="login-title">Welcome Back, @Model.AcademicManager.ManagerName @Model.AcademicManager.ManagerSurname!</h1>
+                    <p class="login-subtitle">Ready to review and oversee claims?</p>
+                    <a class="btn btn-primary submit-btn" asp-controller="Home" asp-action="VerifyClaims">Go to Review Claims</a>
+                }
+                else
+                {
+                    <p>Error: User role not recognized or user data is missing.</p>
+                }
+            }
+            else
+            {
+                <h1 class="login-title">Welcome, Guest!</h1>
+                <p class="login-subtitle">
+                    Welcome to our Contract Monthly Claims System! This platform helps lecturers submit claims for hours worked, and program coordinators to review and approve them.
+                    <br /><br />
+                    Please log in to access your account and get started.
+                </p>
+                <a class="btn btn-primary login-btn" asp-controller="Home" asp-action="Login">Log In</a>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffe4e1; /* Light pink background */
+        color: #880e4f; /* Dark pink text */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #f8bbd0; /* Light pink navbar */
+        color: #880e4f;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #880e4f;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #880e4f;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #880e4f;
+    }
+
+    .profile-circle {
+        background-color: #880e4f; /* Dark pink profile circle */
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #ad1457; /* Darker pink hover */
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    .form-control {
+        border-color: #d81b60; /* Dark pink border for form */
+    }
+
+    label {
+        font-weight: bold;
+        color: #880e4f; /* Dark pink label */
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #f48fb1; /* Medium pink footer */
+        color: #880e4f;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #d81b60; /* Dark pink button */
+        border: none;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+
+    /* Welcome Page Specific Styles */
+    .page-background {
+        background-image: url("../../wwwroot/Images/BG2.jpg");
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .login-box {
+        background-color: #ffe4e1; /* Light pink box background */
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .login-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2rem;
+        color: #880e4f; /* Dark pink text */
+        margin-bottom: 1rem;
+    }
+
+    .login-subtitle {
+        font-family: 'Poppins', sans-serif;
+        color: #880e4f; /* Dark pink text */
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        background-color: #d81b60; /* Dark pink button */
+        color: #ffffff;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457; /* Darker pink hover */
+    }
+</style>
+

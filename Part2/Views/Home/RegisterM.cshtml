@@ -1,0 +1,201 @@
+﻿@model Part1.Models.AcademicManager
+@{
+    ViewData["Title"] = "Register Academic Manager";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-danger">
+            @error.ErrorMessage
+        </div>
+    }
+}
+
+<!-- Centered container for the registration form -->
+<div class="register-container">
+    <div class="register-box">
+        <h1 class="register-title">Register Academic Manager</h1>
+        <p class="register-subtitle">Please fill in the details below to create your account</p>
+
+        <!-- Registration Form -->
+        <form asp-action="RegisterM" method="post">
+            <!-- Manager Name input -->
+            <div class="form-group">
+                <label for="ManagerName">First Name</label>
+                <input asp-for="ManagerName" class="form-control" placeholder="Enter your first name" required>
+                <span asp-validation-for="ManagerName" class="text-danger"></span>
+            </div>
+
+            <!-- Manager Surname input -->
+            <div class="form-group">
+                <label for="ManagerSurname">Surname</label>
+                <input asp-for="ManagerSurname" class="form-control" placeholder="Enter your surname" required>
+                <span asp-validation-for="ManagerSurname" class="text-danger"></span>
+            </div>
+
+            <!-- Manager Email input -->
+            <div class="form-group">
+                <label for="ManagerEmail">Email</label>
+                <input asp-for="ManagerEmail" class="form-control" placeholder="Enter your email" required>
+                <span asp-validation-for="ManagerEmail" class="text-danger"></span>
+            </div>
+
+            <!-- Manager Phone input -->
+            <div class="form-group">
+                <label for="ManagerPhone">Phone</label>
+                <input asp-for="ManagerPhone" class="form-control" placeholder="Enter your phone number" required>
+                <span asp-validation-for="ManagerPhone" class="text-danger"></span>
+            </div>
+
+            <!-- Manager Password input -->
+            <div class="form-group">
+                <label for="ManagerPassword">Password</label>
+                <input asp-for="ManagerPassword" type="password" class="form-control" placeholder="Enter your password" required>
+                <span asp-validation-for="ManagerPassword" class="text-danger"></span>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary register-btn">Register</button>
+        </form>
+
+        <!-- Option for password recovery -->
+        <p class="login-option"><a href="@Url.Action("Login", "Home")">Already have an account? Log in here.</a></p>
+    </div>
+</div>
+
+<!-- Custom styles for the register page -->
+<style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffe4e1; /* Light pink background */
+        color: #880e4f; /* Dark pink text */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #f8bbd0; /* Light pink navbar */
+        color: #880e4f;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #880e4f;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #880e4f;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #880e4f;
+    }
+
+    /* Profile Circle */
+    .profile-circle {
+        background-color: #880e4f; /* Dark pink */
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    /* Form Control Styles */
+    .form-control {
+        border-color: #d81b60; /* Dark pink border */
+        border-radius: 5px;
+        padding: 0.75rem;
+        color: #880e4f; /* Dark pink text */
+    }
+
+    .form-control:focus {
+        border-color: #ad1457; /* Darker pink on focus */
+        box-shadow: 0 0 5px rgba(173, 20, 87, 0.5);
+    }
+
+    label {
+        font-weight: bold;
+        color: #880e4f; /* Dark pink label */
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #d81b60; /* Dark pink button */
+        border: none;
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457; /* Darker pink hover effect */
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #f8bbd0; /* Light pink footer */
+        color: #880e4f;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+</style>
+

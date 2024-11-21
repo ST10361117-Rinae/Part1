@@ -1,0 +1,257 @@
+﻿@model Part1.Models.SubmitClaimsViewModel
+@{
+    ViewData["Title"] = "About Us";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">@ViewData["Title"]</h1>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="text-center my-4">
+            @if (User.IsInRole("Programme Coordinator"))
+            {
+                var coordinator = Model.ProgrammeCoordinator;
+                if (coordinator != null)
+                {
+                    <p class="lead">Welcome, @coordinator.CoordinatorName @coordinator.CoordinatorSurname!</p>
+                    <p>Your role as a Programme Coordinator involves verifying claims and managing lecturers effectively.</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h2>Overview</h2>
+                            <p>
+                                Your role is crucial in ensuring that all claims submitted by lecturers are thoroughly reviewed.
+                                Use this platform to streamline the verification process, maintain communication with lecturers,
+                                and uphold the integrity of your program.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Responsibilities</h2>
+                            <ul>
+                                <li>Verify claims for accuracy and compliance.</li>
+                                <li>Approve or reject claims based on criteria.</li>
+                                <li>Provide feedback on rejected claims.</li>
+                                <li>Maintain records for reporting and audits.</li>
+                                <li>Communicate with lecturers to resolve issues.</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Error: Programme Coordinator not found.</p>
+                }
+            }
+            else if (User.IsInRole("Academic Manager"))
+            {
+                var academicManager = Model.AcademicManager;
+                if (academicManager != null)
+                {
+                    <p class="lead">Welcome, @academicManager.ManagerName @academicManager.ManagerSurname!</p>
+                    <p>You oversee the management of claims and ensure compliance with institutional standards.</p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h2>Your Role</h2>
+                            <p>
+                                As an Academic Manager, you play a vital role in the claims process, ensuring that all claims are
+                                handled correctly. Use this platform to support Programme Coordinators and lecturers.
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h2>Responsibilities</h2>
+                            <ul>
+                                <li>Review claims for compliance.</li>
+                                <li>Provide oversight to Programme Coordinators.</li>
+                                <li>Collaborate with faculty on claim issues.</li>
+                                <li>Maintain comprehensive records for audits.</li>
+                                <li>Develop strategies for process improvements.</li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Error: Academic Manager not found.</p>
+                }
+            }
+            else if (User.IsInRole("Lecturer"))
+            {
+                var lecturer = Model.Lecturer;
+                <p class="lead">Welcome, @lecturer.LecturerName @lecturer.LecturerSurname!</p>
+                <p>You can submit claims and track their status in real-time.</p>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h2>Your Role</h2>
+                        <p>
+                            As a Lecturer, you play an essential role in the academic community. Use this platform to submit your claims
+                            for hours worked and track the progress efficiently.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>Key Features</h2>
+                        <ul>
+                            <li>Real-Time Tracking of claims.</li>
+                            <li>Detailed Reporting for transparency.</li>
+                            <li>User Management features.</li>
+                            <li>Notification System for updates.</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>Error: Role not recognized.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center my-4">
+            <p class="lead">Welcome, Guest!</p>
+            <p>Please log in to access your account and manage claims.</p>
+            <a class="btn btn-primary" asp-controller="Home" asp-action="Login">Log In</a>
+        </div>
+    }
+</div>
+
+<style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffe4e1; /* Light pink background */
+        color: #880e4f; /* Dark pink text */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #f8bbd0; /* Light pink for navbar */
+        color: #880e4f;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #880e4f;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #880e4f;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #880e4f;
+    }
+
+    .profile-circle {
+        background-color: #880e4f; /* Dark pink profile circle */
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    .form-control {
+        border-color: #d81b60; /* Dark pink for form borders */
+    }
+
+    label {
+        font-weight: bold;
+        color: #880e4f; /* Dark pink for labels */
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #f48fb1; /* Medium light pink for footer */
+        color: #880e4f;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #d81b60; /* Dark pink for buttons */
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+
+    /* Additional Styles for the About Us Page */
+    .lead {
+        font-weight: bold;
+        color: #880e4f; /* Dark pink for lead text */
+    }
+
+    h2 {
+        margin-top: 1.5rem;
+        color: #d81b60; /* Dark pink for headings */
+    }
+
+    p {
+        color: #880e4f; /* Dark pink for paragraph text */
+    }
+
+    .btn-primary {
+        background-color: #d81b60;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457;
+    }
+</style>
+

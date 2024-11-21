@@ -1,0 +1,263 @@
+﻿<style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #fce4ec; /* Light pink background */
+        color: #880e4f; /* Darker pink color for text */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #f48fb1; /* Light pink navbar */
+        color: #880e4f; /* Darker pink for navbar text */
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #880e4f;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #880e4f;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #880e4f; /* Toggler border color */
+    }
+
+    .profile-circle {
+        background-color: #880e4f; /* Dark pink */
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #a50034; /* Darker shade on hover */
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    .form-control {
+        border-color: #f06292; /* Light pink for input borders */
+    }
+
+    label {
+        font-weight: bold;
+        color: #880e4f; /* Darker pink for labels */
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #f8bbd0; /* Light pink footer */
+        color: #880e4f;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #f06292; /* Light pink button */
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #c2185b; /* Darker pink on hover */
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+</style>
+
+@model List<ClaimSubmissionInfo>
+@using System.Security.Claims
+@using System.Linq
+@using Part1.Context;
+
+
+
+@inject Part1.Context.ApplicationDbContext DbContext
+
+
+
+<div class="container">
+    <h1 class="text-center">Track Your Claims</h1>
+
+    <div class="view-toggle mb-3">
+        <button id="listViewBtn" class="btn btn-outline-primary active-btn">List View</button>
+        <button id="gridViewBtn" class="btn btn-outline-secondary">Grid View</button>
+    </div>
+
+    <div id="claimsContainer" class="row list-view">
+        @if (Model != null && Model.Any())
+        {
+            // Get the user ID
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int userId = int.Parse(userIdClaim);
+            // Retrieve the user's email
+            var userEmail = DbContext.Users.FirstOrDefault(u => u.userID == userId)?.Username;
+
+            if (userEmail != null)
+            {
+                // Get the corresponding LecturerID using the user's email
+                var lecturerId = DbContext.Lecturers.FirstOrDefault(l => l.LecturerEmail == userEmail)?.LecturerID;
+
+                // Filter the claims based on the LecturerID
+                var userClaims = Model.Where(c => c.LecturerID == lecturerId);
+
+                if (!userClaims.Any())
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info" role="alert">
+                            No claims found for you. Please submit your claims to track their status.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    foreach (var submissionInfo in userClaims)
+                    {
+                        <div class="col-md-12 mb-4 claim-item">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Claim ID: @submissionInfo.Claim.ClaimID</h5>
+                                    <p><strong>Status:</strong> <span class="status-text">@submissionInfo.Claim.Status</span></p>
+                                    <p><strong>Modules:</strong></p>
+                                    <ul>
+                                        @foreach (var module in submissionInfo.SelectedModules)
+                                        {
+                                            <li>@module</li>
+                                        }
+                                    </ul>
+                                    <p><strong>Hours Worked:</strong> @submissionInfo.Claim.HoursWorked</p>
+                                    <p><strong>Hourly Rate:</strong> R @submissionInfo.Claim.HourlyRate.ToString("F2")</p>
+                                    <p><strong>Total Amount:</strong> R @submissionInfo.Claim.TotalClaimAmount</p>
+
+                                    @if (submissionInfo.ApprovalProcess != null)
+                                    {
+                                        <p><strong>Feedback:</strong> @submissionInfo.ApprovalProcess.Feedback</p>
+                                        <p><strong>Approved/Rejected On:</strong> @submissionInfo.ApprovalProcess.ApprovalDate.ToString("dd MMM yyyy")</p>
+                                        <p><strong>Program Coordinator:</strong> @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorName @submissionInfo.ApprovalProcess.Coordinator?.CoordinatorSurname</p>
+                                        <p><strong>Academic Manager:</strong> @submissionInfo.ApprovalProcess.Manager?.ManagerName @submissionInfo.ApprovalProcess.Manager?.ManagerSurname</p>
+                                    }
+                                    else
+                                    {
+                                        <p><strong>Approval Process:</strong> Not yet started</p>
+                                    }
+                                    <div class="progress">
+                                        <div class="progress-bar @GetProgressBarClass(submissionInfo.Claim.Status)" role="progressbar" style="width: @(GetProgressPercentage(submissionInfo.Claim.Status))%" aria-valuenow="@GetProgressPercentage(submissionInfo.Claim.Status)" aria-valuemin="0" aria-valuemax="100">
+                                            @submissionInfo.Claim.Status
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        No claims found for you. Please submit your claims to track their status.
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No claims found. Please submit your claims to track their status.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    private string GetProgressBarClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning",
+            "Approved" => "bg-success",
+            "Rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    private int GetProgressPercentage(string status)
+    {
+        return status switch
+        {
+            "Pending" => 50,
+            "Approved" => 100,
+            "Rejected" => 95,
+            _ => 0
+        };
+    }
+}
+
+<script>
+    // JavaScript to toggle between List and Grid view
+    document.getElementById('listViewBtn').addEventListener('click', function () {
+        document.getElementById('claimsContainer').classList.remove('grid-view');
+        document.getElementById('claimsContainer').classList.add('list-view');
+        this.classList.add('active-btn'); // Set this button as active
+        document.getElementById('gridViewBtn').classList.remove('active-btn'); // Remove active from grid button
+    });
+
+    document.getElementById('gridViewBtn').addEventListener('click', function () {
+        document.getElementById('claimsContainer').classList.remove('list-view');
+        document.getElementById('claimsContainer').classList.add('grid-view');
+        this.classList.add('active-btn'); // Set this button as active
+        document.getElementById('listViewBtn').classList.remove('active-btn'); // Remove active from list button
+    });
+</script>

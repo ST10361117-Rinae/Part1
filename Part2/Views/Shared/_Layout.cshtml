@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CMSC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+    /* General Styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Poppins', sans-serif;
+        background-color: #ffe4e1; /* Light pink background */
+        color: #880e4f; /* Dark pink text color */
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #f8bbd0; /* Light pink for the navbar */
+        color: #880e4f;
+        padding: 15px 30px;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .navbar-brand {
+        color: #880e4f;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .nav-link {
+        color: #880e4f;
+        font-weight: 500;
+        margin-right: 20px;
+    }
+
+    .navbar-toggler {
+        border-color: #880e4f;
+    }
+
+    .profile-circle {
+        background-color: #880e4f; /* Dark pink for profile circle */
+        color: #fff;
+        font-size: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .profile-circle:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Content Area */
+    .container {
+        margin-top: 30px;
+        flex: 1;
+    }
+
+    .form-control {
+        border-color: #d81b60; /* Dark pink borders for form controls */
+    }
+
+    label {
+        font-weight: bold;
+        color: #880e4f; /* Dark pink for labels */
+    }
+
+    /* Footer Styles */
+    footer {
+        background-color: #f48fb1; /* Medium light pink for the footer */
+        color: #880e4f;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #d81b60; /* Dark pink for buttons */
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #ad1457; /* Darker pink on hover */
+    }
+
+    /* Responsive Adjustments */
+    @@media (max-width: 768px) {
+        .navbar {
+            padding: 10px 20px;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .profile-circle {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        .collapse.navbar-collapse {
+            justify-content: flex-end;
+        }
+    }
+</style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    CMSC
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (User.IsInRole("Lecturer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Submit">Submit Claim</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Track">Track Status</a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Programme Coordinator") || User.IsInRole("Academic Manager"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="VerifyClaims">Verify Claims</a>
+                            </li>
+                        }
+                        <li class="nav-item dropdown">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var nameParts = User.Identity.Name.Split(' ');
+                                var initials = nameParts.Length >= 2 ? $"{nameParts[0][0]}{nameParts[1][1]}" : $"{nameParts[0][0]}";
+
+                                <a class="profile-circle dropdown-toggle" href="#" id="profileDropdown"
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @initials
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                                    <li>
+                                        <form asp-area="" asp-controller="Home" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" onclick="window.location.href='@Url.Action("Login", "Home")'">Log In</button>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        <div class="container">
+            &copy; 2024 - CMSC
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
